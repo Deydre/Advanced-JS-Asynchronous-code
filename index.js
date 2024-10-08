@@ -40,39 +40,42 @@ function getAllImagesByBreed2(breed) {
     return imagenRaza;
 }
 
-// 5.- Declarara una función getGitHubUserProfile(username) que obtenga el perfil de usuario de github a partir de su nombre de usuario. (https://api.github.com/users/{username}).
+// 5.- Declara una función getGitHubUserProfile(username) que obtenga el perfil de usuario de github a partir de su nombre de usuario. (https://api.github.com/users/{username}).
 
 function getGitHubUserProfile(username) {
     let perfil = fetch(`https://api.github.com/users/${username}`)
         .then(res => res.json())
-        .then(data => data.name)
+        .then(data => data)
         .catch(err => console.log("MENSAJE DE ERROR: " + err.message));
 
     return perfil;
 }
 
 // 6.- Declara una función printGithubUserProfile(username) que reciba como argumento el nombre de un usuario (username), retorne {img, name} y pinte la foto y el nombre en el DOM.
+// USAMOS LA FUNCIÓN DEL EJERCICIO 5 PARA AÑADIRLE UN THEN
 
 function printGithubUserProfile(username) {
-    let perfil = fetch(`https://api.github.com/users/${username}`)
-        .then(res => res.json())
+    const result = getGitHubUserProfile(username)
         .then(data => {
             let name = data.name;
-            let img = document.createElement('img');
-            img.setAttribute('src', data.avatar_url);
-            img.setAttribute('alt', data.name);
+            let img = data.avatar_url
+            // Pintar en el DOM
+            let imgDOM = document.createElement('img');
+            imgDOM.setAttribute('src', data.avatar_url);
+            imgDOM.setAttribute('alt', data.name);
 
             let p = document.createElement('p');
             p.textContent = data.name;
 
             document.body.appendChild(img);
             document.body.appendChild(p);
-
-            return { img, name};
+            // Devolver lo que nos pide
+            return { img, name };
         })
-
-    return perfil;
+        .catch(err => console.log("MENSAJE DE ERROR: " + err.message));
+    return result
 }
+
 
 //  7. Crea una función getAndPrintGitHubUserProfile(username) que contenga una petición a la API para obtener información de ese usuario y devuelva un string que represente una tarjeta HTML como en el ejemplo, la estructura debe ser exactamente la misma:
 
@@ -81,6 +84,7 @@ function getAndPrintGitHubUserProfile(username) {
         .then(res => res.json())
         .then(data => {
 
+            // Esto es para el ejercicio 8 (quitar y hacer el 8 con innerHTML)
             let section = document.createElement('section');
 
             let img = document.createElement('img');
@@ -107,6 +111,7 @@ function getAndPrintGitHubUserProfile(username) {
             `
 
         })
+        .catch(err => console.log("MENSAJE DE ERROR: " + err.message));
 
     return perfil;
 }
@@ -120,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const username = document.querySelector("#username").value;
 
         if (username) {
+            // Poner then y innerHTML += ...
             getAndPrintGitHubUserProfile(username);
         } else {
             alert("Ingresa un nombre de usuario, por favor");
@@ -127,3 +133,29 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
 });
+
+/*
+ 9.- Dada una lista de usuarios de github guardada en una array,crea una funcion fetchGithubUsers(userNames) que utilice 'https://api.github.com/users/${name}' para obtener el nombre de cada usuario.
+Objetivo: Usar Promise.all()
+Recordatorio: Una llamada a fetch() devuelve un objeto promesa.
+Pregunta. ¿cuántas promesas tendremos?
+Hasta que no se resuelvan todas las promesas desencadenadas por cada fetch(), no se cargarán los datos.
+
+Pasos:
+
+Mapear el array y hacer un fetch() para cada usuario. Esto nos de vuelve un array lleno de promesas.
+Con Promise.all() harás que se tenga que resolver todo el proceso de peticiones a GitHub a la vez.
+Cuando Promise.all() haya terminado: Consigue que se imprima por consola la url del repositorio de cada usuario. Consigue que se imprima por consola el nombre de cada usuario.
+*/
+
+function fetchGithubUsers(userNames){
+    Promise.all(
+        userNames.map(nombre => fetch(`https://api.github.com/users/${nombre}`)
+                                    .then(res => res.json())
+                                    .then(data => console.log(data.name))
+        )
+    )
+
+}
+
+ fetchGithubUsers("JhonyBe77", "Deydre", "alenriquez96");
