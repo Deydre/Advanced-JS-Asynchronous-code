@@ -67,7 +67,7 @@ function printGithubUserProfile(username) {
             let p = document.createElement('p');
             p.textContent = data.name;
 
-            document.body.appendChild(img);
+            document.body.appendChild(imgDOM);
             document.body.appendChild(p);
             // Devolver lo que nos pide
             return { img, name };
@@ -143,19 +143,22 @@ Hasta que no se resuelvan todas las promesas desencadenadas por cada fetch(), no
 
 Pasos:
 
-Mapear el array y hacer un fetch() para cada usuario. Esto nos de vuelve un array lleno de promesas.
+Mapear el array y hacer un fetch() para cada usuario. Esto nos devuelve un array lleno de promesas.
 Con Promise.all() harás que se tenga que resolver todo el proceso de peticiones a GitHub a la vez.
 Cuando Promise.all() haya terminado: Consigue que se imprima por consola la url del repositorio de cada usuario. Consigue que se imprima por consola el nombre de cada usuario.
 */
 
-function fetchGithubUsers(userNames){
+function fetchGithubUsers(userNames) {
     Promise.all(
-        userNames.map(nombre => fetch(`https://api.github.com/users/${nombre}`)
-                                    .then(res => res.json())
-                                    .then(data => console.log(data.name))
-        )
-    )
-
+        userNames.map(nombre => fetch(`https://api.github.com/users/${nombre}`).then(res => res.json()))
+    ).then(data => {
+        for (let i = 0; i < data.length; i++) {
+            console.log(data[i].name)
+        }
+    })
 }
 
- fetchGithubUsers("JhonyBe77", "Deydre", "alenriquez96");
+
+
+
+
